@@ -58,8 +58,14 @@ module Gretel
         out.unshift(link_to(crumb.link.text, crumb.link.url, crumb.link.options.reverse_merge(link_options)))
       end
       
-      out = out.map { |link| %Q{<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">#{link}</span>} } if options[:semantic]
-      out.join(" #{separator} ").html_safe
+      out.map! { |link| %Q{<span itemscope itemtype="http://data-vocabulary.org/Breadcrumb">#{link}</span>} } if options[:semantic]
+      
+      # add separarator
+      out = out[0...-1].map! { |link| "#{link} #{separator} ".html_safe } + out[-1..-1]
+      
+      out.map! { |link| content_tag options[:wrapper_tag], link } if options[:wrapper_tag]
+
+      out.join("").html_safe 
     end
   end
 end
